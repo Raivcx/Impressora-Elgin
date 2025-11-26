@@ -334,12 +334,13 @@ static void exibirMenu(void)
 int main(void)
 {
     if (!carregarFuncoes()) {
+        system("pause");
         return 1;
     }
 
     int opcao = -1;
     while (opcao!=0) {    
-	// La�o de repeti��o com menu(switch case) para intera��o com as fun��es da impressora Elgin, o la�o se encerra com o 'case 0' para encerrar conex�o e programa!
+	// Laco de repeticao com menu(switch case) para interacao com as funcoes da impressora Elgin, o laco se encerra com o 'case 0' para encerrar conexao e programa!
         exibirMenu();
         printf("\nEscolha uma opcao:\n");
 		scanf("%d",&opcao);
@@ -360,7 +361,9 @@ int main(void)
 								printf("Opcao invalida\n"); break;    
                 
     	}
-       system("cls");
+        printf("\nPressione ENTER para continuar...");
+        getchar();
+        system("cls");
     }
 }
 
