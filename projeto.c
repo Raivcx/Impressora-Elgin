@@ -315,9 +315,10 @@ int main(void)
 						case 10: emitirSinalSonoro(); break;
 						case 0: fecharConexao(); break;
 							default:
-								printf("OpÃ§Ã£o invalida\n"); break;  
+								printf("Opcao invalida\n"); break;  
                 
     	}
         system("cls");
     }
 }
+
