@@ -118,21 +118,10 @@ static void configurarConexao(void)
         return;
     }
 
-    /* ======================= Tipo de conexao ======================= */
-    printf("\nConexoes disponiveis:\n");
-    printf("USB\nTCP/IP\nBluetooth\n");
+ 
 
-    printf("Digite o tipo de conexao: ");
-    fgets(g_conexao, sizeof(g_conexao), stdin);
-    g_conexao[strcspn(g_conexao, "\n")] = 0;
-
-    if (strlen(g_conexao) == 0) {
-        printf("Conexao invalida!\n");
-        return;
-    }
-
-    /* ======================= Tipo numérico da conexao ======================= */
-    printf("\nSelecione o tipo numerico:\n");
+    /* ======================= Tipo da conexao ======================= */
+    printf("\nSelecione o tipo:\n");
     printf("1 - USB\n");
     printf("2 - RS232\n");
     printf("3 - TCP/IP\n");
@@ -172,21 +161,33 @@ static void abrirConexao(void)
     // Caso tenha algum problema na variavel 'resultado', ele fecha a conexÃ£o com a impressora pela variavel g_conectada=0.
     int resultado;
     resultado = AbreConexaoImpressora(g_tipo,g_modelo,g_conexao,g_parametro);
-	if(resultado==0){g_conectada=1;printf("Conectado com sucesso...\n");}
+	if(resultado==0){g_conectada=1;printf("Conectado com sucesso...\n");
+    InicializaImpressora(); SinalSonoro(4, 2, 5);
+    flush_entrada();
+    return;
+}
 	else{printf("Falha na conexao...\n");g_conectada=0;}
+    return;
 }
 
 void fecharConexao()
 {
     // funcaÃ§Ã£o para fechar conexÃ£o com impressora delimitada pela variÃ¡vel 'g_conectada'.
+    if(g_conectada){
     FechaConexaoImpressora();
-    g_conectada=0;
+    g_conectada = 0;
+    printf("conexao fechada!");
+}
+    else{
+         printf("Sem conexao ativa");
+         }
 }
 
 static void imprimirTexto(void)
 {
      // Entrada de dados para texto, o usuÃ¡rio tem atÃ© 250 para escrever qualquer dado do tipo string, delimitado pelo FGETS e Sizeof.
-    flush_entrada();
+    if(!g_conectada){printf("Impressora nao conectada!\n");return;}
+     flush_entrada();
     char texto[250];
     int pos, estilo, tamanho;
 	printf("Digite a mensagem a ser impressa, max. 250 caracteres:\n");
@@ -207,6 +208,8 @@ static void imprimirTexto(void)
 static void imprimirQRCode(void)
 {
     // Entrada de dados com formataÃ§Ã£o do tipo QRCode, usuÃ¡rio digita os dados do tipo string, e a funÃ§Ã£o converte para QRCode.
+    if(!g_conectada){printf("Impressora nao conectada!\n");return;}
+     flush_entrada();
     char texto[250];
     int tamanho,correcao;
     flush_entrada();
@@ -223,6 +226,7 @@ static void imprimirCodigoBarras(void)
 {
     // Aqui podemos imprimir um valor fixo de cÃ³digo de barras, sem a entrada de dados. A sintaxe Ã© tipo do cÃ³digo de barras,
     // dados a serem impresso, altura, largura e HRI que define a posiÃ§Ã£o da impressÃ£o do conteÃºdo do cÃ³digo.
+    if(!g_conectada){printf("Impressora nao conectada!\n");return;}
     ImpressaoCodigoBarras(8, "{A012345678912", 100, 2, 3);
     AvancaPapel(3);
 	Corte(1);
@@ -230,6 +234,7 @@ static void imprimirCodigoBarras(void)
 
 static void imprimirXMLSAT(void)
 {
+    if(!g_conectada){printf("Impressora nao conectada!\n");return;}
     ImprimeXMLSAT("path=./XMLSAT.xml", 1);
     // TODO: ler o arquivo ./XMLSAT.xml e enviar via ImprimeXMLSAT
     // incluir AvancaPapel e Corte no final
@@ -239,8 +244,8 @@ static void imprimirXMLSAT(void)
 
 static void imprimirXMLCancelamentoSAT(void)
 {
-    
-    ImprimeXMLCancelamentoSAT("path=/CANC_SAT.xml", "Q5DLkpdRijIRGY6YSSNsTWK1TztHL1vD0V1Jc4spo/CEUqICEb9SFy82ym8EhBRZ"
+    if(!g_conectada){printf("Impressora nao conectada!\n");return;}
+    ImprimeXMLCancelamentoSAT("path=./CANC_SAT.xml", "Q5DLkpdRijIRGY6YSSNsTWK1TztHL1vD0V1Jc4spo/CEUqICEb9SFy82ym8EhBRZ"
         "jbh3btsZhF+sjHqEMR159i4agru9x6KsepK/q0E2e5xlU5cv3m1woYfgHyOkWDNc"
         "SdMsS6bBh2Bpq6s89yJ9Q6qh/J8YHi306ce9Tqb/drKvN2XdE5noRSS32TAWuaQE"
         "Vd7u+TrvXlOQsE3fHR1D5f1saUwQLPSdIv01NF6Ny7jZwjCwv1uNDgGZONJdlTJ6"
@@ -264,12 +269,14 @@ static void imprimirXMLCancelamentoSAT(void)
 
 static void abrirGavetaElginOpc(void)
 {
+    if(!g_conectada){printf("Impressora nao conectada!\n");return;}
     // Abre trava da gaveta da impressora elgin
     AbreGavetaElgin(1, 50, 50);
 }
 
 static void abrirGavetaOpc(void)
 {
+    if(!g_conectada){printf("Impressora nao conectada!\n");return;}
     // Abre gaveta com parametros personalizados, utilizado para impressoras de outras marcas. Sintaxe (valor inteiro de 0 a 1 com base no pino da impressora,
     // valor inteiro de 1 a 255 tempo de inicializaÃ§Ã£o, valor inteiro de 1 a 255 tempo de desativaÃ§Ã£o)
   
@@ -278,6 +285,7 @@ static void abrirGavetaOpc(void)
 
 static void emitirSinalSonoro(void)
 {
+    if(!g_conectada){printf("Impressora nao conectada!\n");return;}
     // Emite um sinal sonoro afim de testes de conexÃ£o e funcionamento
     SinalSonoro(4, 2, 5);
 }
@@ -299,9 +307,10 @@ int main(void)
 
     int opcao = -1;
     while (opcao!=0) {    
-	// LaÃ§o de repetiÃ§Ã£o com menu(switch case) para interaÃ§Ã£o com as funÃ§Ãµes da impressora Elgin, o laÃ§o se encerra com o 'case 0' para encerrar conexÃ£o e programa!
-        exibirMenu();
+	// La�o de repeti��o com menu(switch case) para intera��o com as fun��es da impressora Elgin, o la�o se encerra com o 'case 0' para encerrar conex�o e programa!
+        //exibirMenu();
 		scanf("%d",&opcao);
+		flush_entrada();
 		switch(opcao){
 			case 1: configurarConexao(); break;
 			case 2: abrirConexao(); break;
@@ -315,10 +324,10 @@ int main(void)
 						case 10: emitirSinalSonoro(); break;
 						case 0: fecharConexao(); break;
 							default:
-								printf("Opcao invalida\n"); break;  
+								printf("Op��o invalida\n"); break;    
                 
     	}
-        system("cls");
+       system("cls");
     }
 }
 
