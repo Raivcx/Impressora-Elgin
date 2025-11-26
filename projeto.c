@@ -118,8 +118,7 @@ static void configurarConexao(void)
 	if(g_tipo == 1 || g_tipo == 2 || g_tipo == 5){g_parametro=0;printf("Parametro default: '0'\n");}
 	else{printf("Digite o parametro:\n");
     flush_entrada();
-    scanf("%d",g_parametro);}
-	AbreConexaoImpressora(g_tipo,g_modelo,g_conexao,g_parametro);
+    scanf("%d", &g_parametro);}
 	
 }	
 
@@ -273,9 +272,10 @@ int main(void)
 						case 0: fecharConexao(); break;
 							default:
 								printf("Opção invalida\n"); break;  
-        system("cls");
                 
     	}
+        system("cls");
     }
 }
+
 
